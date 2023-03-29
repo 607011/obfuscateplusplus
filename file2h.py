@@ -9,13 +9,15 @@ def lcg(x, a, c, m):
         x = ((a * x + c) & 0xffffffff) % m
 
 def convert(filename, key):
-    size = os.path.getsize(filename)
+    size = os.path.getsize(filename)+1
     r = lcg(key, 48271, 0, 2147483647)
     var_name = os.path.basename(filename).replace(".", "_")
     result = f'constexpr size_t {var_name}_size = {size};\n'
     result += f'const unsigned char {var_name}[{var_name}_size] = {{\n    '
     i = 0
-    for byte in open(filename, 'rb').read():
+    data = open(filename, 'rb').read()
+    data += b'\0'
+    for byte in data:
         mask = next(r) & 0xff
         result += f'0x{(byte ^ mask):02x}'
         i += 1

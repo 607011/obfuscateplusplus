@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(obf-demo)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
   set(CMAKE_CXX_STANDARD 17)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -14,13 +16,12 @@ endif()
 
 set(OBFUSCATION_KEY 0x13371337)
 
-set(CMAKE_CXX_FLAGS "-Wno-format-security -pthread -DOBFUSCATION_KEY=${OBFUSCATION_KEY}")
+set(CMAKE_CXX_FLAGS "-Wno-format-security")
+add_compile_definitions(OBFUSCATION_KEY=${OBFUSCATION_KEY})
 
 if(UNIX AND NOT APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 endif()
-
-set(PLATFORM_DEPENDENT_LIBRARIES, "-lpthread")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-Wpedantic -O0 -g3 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-Os -DNDEBUG -Wno-pragmas")
@@ -34,15 +35,15 @@ include(CheckFunctionExists)
 
 check_function_exists(memset_s HAVE_MEMSET_S)
 if(HAVE_MEMSET_S)
-  add_definitions(-DHAVE_MEMSET_S)
+  add_compile_definitions(HAVE_MEMSET_S)
 endif()
 check_function_exists(memset HAVE_MEMSET)
 if(HAVE_MEMSET)
-  add_definitions(-DHAVE_MEMSET)
+  add_compile_definitions(HAVE_MEMSET)
 endif()
 check_function_exists(explicit_bzero HAVE_EXPLICIT_BZERO)
 if(HAVE_EXPLICIT_BZERO)
-  add_definitions(-DHAVE_EXPLICIT_BZERO)
+  add_compile_definitions(HAVE_EXPLICIT_BZERO)
 endif()
 
 add_custom_command(
@@ -65,3 +66,9 @@ add_executable(obf-demo
 add_executable(obf-demo-opt
 obf-demo-optimized.cpp
 )
+
+get_directory_property(DirDefs COMPILE_DEFINITIONS)
+message(STATUS "Compiler definitions:")
+foreach(d ${DirDefs})
+    message(STATUS "- " ${d})
+endforeach()

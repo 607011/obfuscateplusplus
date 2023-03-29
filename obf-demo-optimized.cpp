@@ -18,11 +18,11 @@ struct safe_string
     }
     void secure_erase_memory()
     {
-#if HAVE_EXPLICIT_BZERO
+#if defined(HAVE_EXPLICIT_BZERO)
         explicit_bzero(str, size);
-#elif HAVE_MEMSET_S
+#elif defined(HAVE_MEMSET_S)
         memset_s(str, size, 0, size);
-#elif HAVE_MEMSET
+#elif defined(HAVE_MEMSET)
         memset(str, size, 0);
 #else
 #pragma warning "secure_erase_memory() will not work because there's no function to zero memory"

@@ -17,7 +17,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_FLAGS "/EHc /EHs /GF /D__STDC_WANT_SECURE_LIB__")
-  set(CMAKE_CXX_FLAGS_DEBUG "/W4 /Od -DDEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG "/W4 /Od /DDEBUG")
   set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG")
 else()
   set(CMAKE_CXX_STANDARD 20)
@@ -37,10 +37,6 @@ check_function_exists(memset_s HAVE_MEMSET_S)
 if(HAVE_MEMSET_S)
   add_compile_definitions(HAVE_MEMSET_S)
 endif()
-check_function_exists(memset HAVE_MEMSET)
-if(HAVE_MEMSET)
-  add_compile_definitions(HAVE_MEMSET)
-endif()
 check_function_exists(explicit_bzero HAVE_EXPLICIT_BZERO)
 if(HAVE_EXPLICIT_BZERO)
   add_compile_definitions(HAVE_EXPLICIT_BZERO)
@@ -58,6 +54,10 @@ add_executable(puzzle
 )
 
 add_dependencies(puzzle hint_txt)
+
+add_executable(cleartext-demo
+  cleartext-demo.cpp
+)
 
 add_executable(obf-demo
   obf-demo.cpp

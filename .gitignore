@@ -12,14 +12,17 @@ compile_commands.json
 build.ninja
 
 .vscode
+.vs
 
 hint.txt.h
 
 puzzle
 obf-demo
 obf-demo-opt
+cleartext-demo
 
-
+*.exe
+*.manifest
 *.coredump
 *.core
 *.dump

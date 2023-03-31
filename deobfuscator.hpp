@@ -41,7 +41,10 @@ namespace obfuscated
 #elif HAVE_MEMSET
             memset(data_, N, 0);
 #else
-#pragma warning "secure_erase_memory() will not work because there's no function to zero memory"
+            for (size_t i = 0; i < N; ++i)
+            {
+                data_[i] = 0U;
+            }
 #endif
         }
     };

@@ -37,9 +37,12 @@ private:
 #elif defined(HAVE_MEMSET_S)
         memset_s(str, size, 0, size);
 #elif defined(HAVE_MEMSET)
-        memset(str, size, 0);
+      memset(str, static_cast<int>(size), 0U);
 #else
-#pragma warning "secure_erase_memory() will not work because there's no function to zero memory"
+      for (size_t i = 0; i < N; ++i)
+      {
+          data_[i] = 0U;
+      }
 #endif
     };
     friend std::ostream& operator<<(std::ostream&, safe_string const &);

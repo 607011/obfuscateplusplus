@@ -1,6 +1,6 @@
 # Obfuscate++
 
-**Advanced methods to obfuscate strings and data in binaries built from C++17 source code**
+**Advanced methods to obfuscate strings and data in binaries built from C++14 source code**
 
 
 

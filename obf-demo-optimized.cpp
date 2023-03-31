@@ -3,32 +3,41 @@
 #include <cstring>
 #include <iostream>
 
-
 #ifdef _WIN32
 #include <Windows.h>
 #endif
 
 #ifndef OBFUSCATION_KEY
 // to silence the IDE's code checker
-#define OBFUSCATION_KEY (0x13371337)
+#define OBFUSCATION_KEY (0x13371337U)
 #endif
 
 class safe_string
 {
 private:
-    char *const str;
-    size_t const size;
+    char *str_;
+    size_t size_;
 
 public:
     safe_string()
-      : str(nullptr)
-      , size(0U)
-    {}
+        : str_(nullptr), size_(0U)
+    {
+    }
     safe_string(char *const str, size_t size)
-      : str(str)
-      , size(size)
-    {}
-    safe_string & operator=(safe_string &) = delete;
+        : str_(str), size_(size)
+    {
+    }
+    safe_string(safe_string &&other)
+        : str_(other.str_), size_(other.size_)
+    {
+        other.str_ = nullptr;
+        other.size_ = 0U;
+    }
+    safe_string &operator=(safe_string const &other) = delete;
+    const char *c_str() const
+    {
+        return str_;
+    }
     ~safe_string()
     {
         secure_erase_memory();
@@ -37,27 +46,26 @@ public:
 private:
     void secure_erase_memory()
     {
-#if HAVE_SECUREZEROMEMORY
-      SecureZeroMemory(str, size);
+#if defined(HAVE_SECUREZEROMEMORY)
+        SecureZeroMemory(str_, size_);
 #elif defined(HAVE_EXPLICIT_BZERO)
-        explicit_bzero(str, size);
+        explicit_bzero(str_, size_);
 #elif defined(HAVE_MEMSET_S)
-        memset_s(str, size, 0, size);
-#elif defined(HAVE_MEMSET)
-      memset(str, static_cast<int>(size), 0U);
+        memset_s(str_, size_, 0, size_);
 #else
-      for (size_t i = 0; i < N; ++i)
-      {
-          data_[i] = 0;
-      }
+        volatile char *p = str_;
+        size_t n = size_;
+        while (n--) {
+            *p++ = '\0';
+        }
 #endif
     };
-    friend std::ostream& operator<<(std::ostream&, safe_string const &);
+    friend std::ostream &operator<<(std::ostream &, safe_string const &);
 };
 
-std::ostream& operator<<(std::ostream &os, safe_string const &s)
+std::ostream &operator<<(std::ostream &os, safe_string const &s)
 {
-    os << s.str;
+    os << s.str_;
     return os;
 }
 
@@ -101,7 +109,9 @@ private:
 
 int main(void)
 {
-    std::cout << OBFUSCATED_STR(OBFUSCATION_KEY, "Hallo, Welt!");
+    {
+        std::cout << OBFUSCATED_STR(OBFUSCATION_KEY, "Hallo, Welt!");
+    }
     std::cin.get();
     return EXIT_SUCCESS;
 }

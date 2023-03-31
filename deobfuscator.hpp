@@ -15,7 +15,7 @@ namespace obfuscated
     class data
     {
     public:
-        char const *c_str() const { return reinterpret_cast<char const*>(data_); }
+        char const *c_str() const { return reinterpret_cast<char const *>(data_); }
         inline std::string string() const { return c_str(); }
         inline std::string operator()() const { return data_; }
         constexpr size_t size() const { return N; }
@@ -38,18 +38,18 @@ namespace obfuscated
 
         void secure_erase_memory()
         {
-#if HAVE_SECUREZEROMEMORY
+#if defined(HAVE_SECUREZEROMEMORY)
             SecureZeroMemory(data_, N);
-#elif HAVE_EXPLICIT_BZERO
+#elif defined(HAVE_EXPLICIT_BZERO)
             explicit_bzero(data_, N);
-#elif HAVE_MEMSET_S
+#elif defined(HAVE_MEMSET_S)
             memset_s(data_, N, 0, N);
-#elif HAVE_MEMSET
-            memset(data_, N, 0);
 #else
-            for (size_t i = 0; i < N; ++i)
+            volatile unsigned char *p = data_;
+            size_t n = N;
+            while (n--)
             {
-                data_[i] = 0U;
+                *p++ = 0;
             }
 #endif
         }

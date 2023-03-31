@@ -64,7 +64,7 @@ add_executable(obf-demo
 )
 
 add_executable(obf-demo-opt
-obf-demo-optimized.cpp
+  obf-demo-optimized.cpp
 )
 
 get_directory_property(DirDefs COMPILE_DEFINITIONS)

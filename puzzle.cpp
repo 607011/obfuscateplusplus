@@ -5,10 +5,10 @@
 
 #ifndef OBFUSCATION_KEY
 // to silence the IDE's code checker
-#define OBFUSCATION_KEY (0x00031337)
+#define OBFUSCATION_KEY (0x00031337U)
 #endif
 
-int main(int argc, char *argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
 {
     obfuscated::data<OBFUSCATION_KEY,
                      hint_txt_size,

@@ -62,7 +62,7 @@ struct obfuscated
         uint32_t key = KEY;
         for (auto i = 0; i < N; ++i)
         {
-            data_[i] = src[i] ^ static_cast<uint8_t>(key);
+            data_[i] = src[i] ^ static_cast<char>(key);
             key = (A * key + C) % M;
         }
     }
@@ -79,7 +79,7 @@ struct obfuscated
     }
 
 private:
-    uint8_t data_[N];
+    char data_[N];
 };
 
 #define OBFUSCATED_STR(key, str)                                 \

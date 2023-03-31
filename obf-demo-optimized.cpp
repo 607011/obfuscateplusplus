@@ -3,9 +3,14 @@
 #include <cstring>
 #include <iostream>
 
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #ifndef OBFUSCATION_KEY
 // to silence the IDE's code checker
-#define OBFUSCATION_KEY (0x00031337)
+#define OBFUSCATION_KEY (0x13371337)
 #endif
 
 class safe_string
@@ -32,7 +37,9 @@ public:
 private:
     void secure_erase_memory()
     {
-#if defined(HAVE_EXPLICIT_BZERO)
+#if HAVE_SECUREZEROMEMORY
+      SecureZeroMemory(str, size);
+#elif defined(HAVE_EXPLICIT_BZERO)
         explicit_bzero(str, size);
 #elif defined(HAVE_MEMSET_S)
         memset_s(str, size, 0, size);
@@ -41,7 +48,7 @@ private:
 #else
       for (size_t i = 0; i < N; ++i)
       {
-          data_[i] = 0U;
+          data_[i] = 0;
       }
 #endif
     };

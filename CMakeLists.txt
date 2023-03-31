@@ -27,7 +27,12 @@ set(OBFUSCATION_KEY 0x13371337)
 add_compile_definitions(OBFUSCATION_KEY=${OBFUSCATION_KEY})
 
 include(CheckFunctionExists)
+include(CheckSymbolExists)
 
+check_symbol_exists(SecureZeroMemory "Windows.h" HAVE_SECUREZEROMEMORY)
+if(HAVE_SECUREZEROMEMORY)
+  add_compile_definitions(HAVE_SECUREZEROMEMORY)
+endif()
 check_function_exists(memset_s HAVE_MEMSET_S)
 if(HAVE_MEMSET_S)
   add_compile_definitions(HAVE_MEMSET_S)

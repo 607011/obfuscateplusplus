@@ -8,14 +8,28 @@
 #define OBFUSCATION_KEY (0x00031337)
 #endif
 
-struct safe_string
+class safe_string
 {
+private:
     char *const str;
     size_t const size;
+
+public:
+    safe_string()
+      : str(nullptr)
+      , size(0U)
+    {}
+    safe_string(char *const str, size_t size)
+      : str(str)
+      , size(size)
+    {}
+    safe_string & operator=(safe_string &) = delete;
     ~safe_string()
     {
         secure_erase_memory();
     }
+
+private:
     void secure_erase_memory()
     {
 #if defined(HAVE_EXPLICIT_BZERO)

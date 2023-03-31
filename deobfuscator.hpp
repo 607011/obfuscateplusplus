@@ -4,13 +4,13 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-#include <iostream>
 
 namespace obfuscated
 {
     template <uint32_t KEY, size_t N, uint32_t A, uint32_t C, uint32_t M>
-    struct data
+    class data
     {
+    public:
         inline char const *c_str() const { return reinterpret_cast<char const *>(data_); }
         inline std::string string() const { return c_str(); }
         inline std::string operator()() const { return data_; }

@@ -23,7 +23,7 @@ else()
   set(CMAKE_CXX_STANDARD 20)
 endif()
 
-set(OBFUSCATION_KEY 0x13371337U)
+set(OBFUSCATION_KEY 0x13371337)
 add_compile_definitions(OBFUSCATION_KEY=${OBFUSCATION_KEY})
 
 include(CheckFunctionExists)

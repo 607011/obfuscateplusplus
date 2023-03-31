@@ -35,6 +35,6 @@ def main(filename, obfuscation_key):
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print('''Usage: 
-            file2h.py input_file key
+            file2h.py input_file hex_key
         ''')
     main(sys.argv[1], sys.argv[2])

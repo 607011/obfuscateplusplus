@@ -6,9 +6,22 @@
 
 ## Build
 
+### Linux, macOS
+
 ```bash
 git clone https://github.com/607011/obfuscateplusplus.git obfuscate++
 cd obfuscate++
 CMAKE_BUILD_TYPE=Release cmake .
 cmake --build .
+```
+
+### Windows
+
+In PowerShell:
+
+```powershell
+git clone https://github.com/607011/obfuscateplusplus.git obfuscate++
+cd obfuscate++
+cmake .
+cmake --build . --config Release
 ```

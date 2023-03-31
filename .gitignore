@@ -6,6 +6,7 @@ x64/
 Release/
 Debug/
 Makefile
+compile_commands.json
 
 hint.txt.h
 

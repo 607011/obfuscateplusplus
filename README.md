@@ -19,7 +19,9 @@ git checkout CT1123
 ```bash
 git clone https://github.com/607011/obfuscateplusplus.git obfuscate++
 cd obfuscate++
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
+mkdir build
+cd build
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ```
 
@@ -32,7 +34,9 @@ In Visual Studio Command Prompt:
 ```
 git clone https://github.com/607011/obfuscateplusplus.git obfuscate++
 cd obfuscate++
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release .
+mkdir build
+cd build
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ```
 

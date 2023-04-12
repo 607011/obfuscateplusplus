@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 
 #ifndef XOR_KEY
 // to silence the IDE's code checker
@@ -44,6 +43,5 @@ private:
 int main(void)
 {
     printf("%s", XOR_STR(XOR_KEY, "Hallo, Welt!\n"));
-    // std::cin.get();
     return EXIT_SUCCESS;
 }

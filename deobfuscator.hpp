@@ -11,20 +11,22 @@
 
 namespace obfuscated
 {
+    using std::string;
+
     template <uint32_t KEY, size_t N, uint32_t A, uint32_t C, uint32_t M>
-    class data
+    class data final
     {
     public:
-        char const *c_str() const { return reinterpret_cast<char const *>(data_); }
+        char const *c_str() const { return data_; }
         inline std::string string() const { return c_str(); }
         inline std::string operator()() const { return data_; }
         constexpr size_t size() const { return N; }
-        data(const unsigned char *src)
+        data(const unsigned char *const src)
         {
             uint32_t key = KEY;
             for (size_t i = 0; i < N; ++i)
             {
-                data_[i] = src[i] ^ static_cast<unsigned char>(key);
+                data_[i] = src[i] ^ static_cast<char>(key);
                 key = (A * key + C) % M;
             }
         }
@@ -34,7 +36,7 @@ namespace obfuscated
         }
 
     private:
-        unsigned char data_[N];
+        char data_[N];
 
         void secure_erase_memory()
         {

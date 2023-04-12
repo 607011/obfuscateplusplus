@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <algorithm>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -12,26 +13,20 @@
 #define OBFUSCATION_KEY (0x13371337U)
 #endif
 
-class safe_string
-{
-private:
-    char *str_;
-    size_t size_;
+using std::cin;
+using std::cout;
+using std::ostream;
+using std::string;
 
+template <size_t N>
+class safe_string final : public std::array<char, N>
+{
 public:
-    safe_string()
-        : str_(nullptr), size_(0U)
-    {
-    }
-    safe_string(char *const str, size_t size)
-        : str_(str), size_(size)
-    {
-    }
-    safe_string(safe_string &&other)
-        : str_(other.str_), size_(other.size_)
+    safe_string() = delete;
+    safe_string(char *const str) : str_(str) {}
+    safe_string(safe_string &&other) : str_(other.str_)
     {
         other.str_ = nullptr;
-        other.size_ = 0U;
     }
     safe_string &operator=(safe_string const &other) = delete;
     const char *c_str() const
@@ -44,26 +39,32 @@ public:
     }
 
 private:
+    char *str_;
+
     void secure_erase_memory()
     {
 #if defined(HAVE_SECUREZEROMEMORY)
-        SecureZeroMemory(str_, size_);
+        SecureZeroMemory(str_, N);
 #elif defined(HAVE_EXPLICIT_BZERO)
-        explicit_bzero(str_, size_);
+        explicit_bzero(str_, N);
 #elif defined(HAVE_MEMSET_S)
-        memset_s(str_, size_, 0, size_);
+        memset_s(str_, N, 0, N);
 #else
         volatile char *p = str_;
-        size_t n = size_;
-        while (n--) {
+        size_t n = N;
+        while (n--)
+        {
             *p++ = '\0';
         }
 #endif
     };
-    friend std::ostream &operator<<(std::ostream &, safe_string const &);
+
+    template <size_t Nvalue>
+    friend std::ostream &operator<<(std::ostream &, safe_string<Nvalue> const &);
 };
 
-std::ostream &operator<<(std::ostream &os, safe_string const &s)
+template <size_t Nvalue>
+std::ostream &operator<<(std::ostream &os, safe_string<Nvalue> const &s)
 {
     os << s.str_;
     return os;
@@ -75,42 +76,46 @@ struct obfuscated
     constexpr obfuscated(const char *src)
     {
         uint32_t key = KEY;
-        for (auto i = 0; i < N; ++i)
+        for (size_t i = 0; i < N; ++i)
         {
             data_[i] = src[i] ^ static_cast<char>(key);
             key = (A * key + C) % M;
         }
     }
-    void unmask(char *dst) const
+    void unmask(std::array<char, N> &dst) const
     {
-        int i = 0;
         uint32_t key = KEY;
-        do
+        auto d = dst.begin();
+        for (const char *src = data_; src < data_ + N; ++src)
         {
-            dst[i] = data_[i] ^ static_cast<char>(key);
+            *d++ = *src ^ static_cast<char>(key);
             key = (A * key + C) % M;
-            ++i;
-        } while (dst[i - 1] != '\0');
+        }
     }
 
 private:
+    // NOTE: std::array<char, N> would be nicer, but unfortunately
+    // the std::array constructor isn't a constexpr.
     char data_[N];
 };
 
 #define OBFUSCATED_STR(key, str)                                 \
-    []() -> safe_string {                                        \
+    []() -> auto                                                 \
+    {                                                            \
         constexpr auto size = sizeof(str) / sizeof(str[0]);      \
         constexpr auto obfuscated_str =                          \
             obfuscated<key, size, 48271U, 0U, 2147483647U>(str); \
-        static char original_string[size];                       \
+        static std::array<char, size> original_string;           \
         obfuscated_str.unmask(original_string);                  \
-        return {original_string, size};                          \
-    }()
+        return safe_string<size>(original_string.data());        \
+    }                                                            \
+    ()
 
 int main(void)
 {
     {
-        std::cout << OBFUSCATED_STR(OBFUSCATION_KEY, "Hallo, Welt!");
+        auto o = OBFUSCATED_STR(OBFUSCATION_KEY, "Hallo, Welt!");
+        std::cout << o << std::endl;
     }
     std::cin.get();
     return EXIT_SUCCESS;

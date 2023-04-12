@@ -8,7 +8,10 @@
 #define OBFUSCATION_KEY (0x13371337U)
 #endif
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[])
+using std::cout;
+using std::cin;
+
+int main(void)
 {
     {
         obfuscated::data<OBFUSCATION_KEY,

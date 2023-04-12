@@ -5,7 +5,7 @@
 
 ## Für c’t- und heise+-Leser
 
-Die Version mit dem Tag CT1123 ist die in c’t 11/2023 besprochene. Nach dem Klonen bitte auschecken mit
+Die Version mit dem Tag CT1123 ist die in c’t 11/2023 besprochene bzw. [bei heise+ veröffentlichte](https://heise.de/-8526330). Nach dem Klonen bitte auschecken mit
 
 ```bash
 git checkout CT1123

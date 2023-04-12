@@ -26,8 +26,6 @@ endif()
 set(OBFUSCATION_KEY 0x13371337)
 add_compile_definitions(OBFUSCATION_KEY=${OBFUSCATION_KEY})
 
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
-
 include(CheckFunctionExists)
 include(CheckSymbolExists)
 
@@ -46,27 +44,27 @@ endif()
 
 add_custom_command(
   OUTPUT hint.txt.h
-  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/file2h.py ${CMAKE_CURRENT_SOURCE_DIR}/src/hint.txt ${OBFUSCATION_KEY}
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/hint.txt
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/file2h.py ${CMAKE_CURRENT_SOURCE_DIR}/src/hint.txt ${OBFUSCATION_KEY}
+  DEPENDS src/hint.txt
   VERBATIM)
 add_custom_target(hint_txt DEPENDS hint.txt.h)
 
 add_executable(puzzle
-${CMAKE_CURRENT_SOURCE_DIR}/src/puzzle.cpp
+  src/puzzle.cpp
 )
 
 add_dependencies(puzzle hint_txt)
 
 add_executable(cleartext-demo
-${CMAKE_CURRENT_SOURCE_DIR}/src/cleartext-demo.cpp
+  src/cleartext-demo.cpp
 )
 
 add_executable(obf-demo
-${CMAKE_CURRENT_SOURCE_DIR}/src/obf-demo.cpp
+  src/obf-demo.cpp
 )
 
 add_executable(obf-demo-opt
-${CMAKE_CURRENT_SOURCE_DIR}/src/obf-demo-optimized.cpp
+  src/obf-demo-optimized.cpp
 )
 
 get_directory_property(DirDefs COMPILE_DEFINITIONS)

@@ -2,8 +2,14 @@
 #define __DEOBFUSCATOR_HPP__
 
 #include <cstddef>
-#include <cstring>
 #include <string>
+
+#ifdef _MSC_VER
+#include <Windows.h>
+#else
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <string.h>
+#endif
 
 namespace obfuscated
 {

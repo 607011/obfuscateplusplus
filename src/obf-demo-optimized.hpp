@@ -4,7 +4,7 @@
 #include <array>
 #include <cstddef>
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #include <Windows.h>
 #else
 #define __STDC_WANT_LIB_EXT1__ 1

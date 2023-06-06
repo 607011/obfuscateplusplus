@@ -1,3 +1,4 @@
+#include <atomic>
 #include <cstdio>
 #include <cstdlib>
 
@@ -19,6 +20,15 @@ struct obfuscated_xor
     void unmask(char *dst) const
     {
         int i = 0;
+#if defined(__clang__)
+        #pragma clang loop unroll(disable)
+#elif defined(__GNUG__)
+        #pragma GCC unroll 0
+#elif defined(_MSC_VER)
+        #pragma loop( no_vector )
+#else
+        #pragma message("WARNING: cannot disable loop-unrolling. Check binary for unwanted cleartext strings!")
+#endif
         do
         {
             dst[i] = data_[i] ^ KEY;

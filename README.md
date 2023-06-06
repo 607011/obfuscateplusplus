@@ -31,7 +31,7 @@ cmake --build .
 
 ### Windows
 
-In Visual Studio Command Prompt:
+In Visual Studio Developer Console:
 
 ```
 git clone https://github.com/607011/obfuscateplusplus.git obfuscate++

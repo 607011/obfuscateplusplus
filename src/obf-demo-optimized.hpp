@@ -2,15 +2,16 @@
 #define __OBF_DEMO_OPTIMIZED_HPP__
 
 #include <array>
-#include <cstdlib>
+#include <cstddef>
 
 #ifdef _WIN32
 #include <Windows.h>
 #else
-#include <cstring>
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <string.h>
 #endif
 
-template <size_t N>
+template <std::size_t N>
 class safe_string final : public std::array<char, N>
 {
 public:
@@ -30,8 +31,9 @@ private:
 #elif defined(HAVE_MEMSET_S)
         memset_s(this->data(), this->size(), 0, this->size());
 #else
+        #pragma message("WARNING: no function available to securely erase memory.")
         volatile char *p = this->data();
-        size_t n = this->size();
+        auto n = this->size();
         while (n--)
         {
             *p++ = '\0';
@@ -39,18 +41,18 @@ private:
 #endif
     };
 
-    template <size_t LENGTH>
+    template <std::size_t LENGTH>
     friend std::ostream &operator<<(std::ostream &, safe_string<LENGTH> const &);
 };
 
-template <size_t LENGTH>
+template <std::size_t LENGTH>
 std::ostream &operator<<(std::ostream &os, safe_string<LENGTH> const &ss)
 {
     os << ss.data();
     return os;
 }
 
-template <uint32_t KEY, size_t N, uint32_t A, uint32_t C, uint32_t M>
+template <uint32_t KEY, std::size_t N, uint32_t A, uint32_t C, uint32_t M>
 struct obfuscated final
 {
     constexpr obfuscated(const char *src)
@@ -66,6 +68,15 @@ struct obfuscated final
     {
         uint32_t key = KEY;
         auto d = dst.begin();
+#if defined(__clang__)
+        #pragma clang loop unroll(disable)
+#elif defined(__GNUG__)
+        #pragma GCC unroll 0
+#elif defined(_MSC_VER)
+        #pragma loop(no_vector)
+#else
+        #pragma message("WARNING: cannot disable loop-unrolling. Check binary for unwanted cleartext strings!")
+#endif
         for (const char *src = data_; src < data_ + N; ++src)
         {
             *d++ = *src ^ static_cast<char>(key);

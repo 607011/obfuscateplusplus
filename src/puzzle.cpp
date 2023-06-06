@@ -8,9 +8,6 @@
 #define OBFUSCATION_KEY (0x13371337U)
 #endif
 
-using std::cout;
-using std::cin;
-
 int main(void)
 {
     {
